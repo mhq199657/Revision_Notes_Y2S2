@@ -1,0 +1,422 @@
+\PassOptionsToPackage{svgnames}{xcolor}
+\documentclass[12pt]{article}
+
+
+
+\usepackage[margin=1in]{geometry}  
+\usepackage{graphicx}             
+\usepackage{amsmath}              
+\usepackage{amsfonts}              
+\usepackage{framed}               
+\usepackage{amssymb}
+\usepackage{array}
+\usepackage{amsthm}
+\usepackage{multirow}
+\usepackage[nottoc]{tocbibind}
+\usepackage{bm}
+\usepackage{algorithmic}
+\usepackage{enumitem}
+\usepackage{tikz}
+
+\renewcommand{\algorithmicrequire}{\textbf{Input:}}
+\renewcommand{\algorithmicensure}{\textbf{Output:}}
+  \newcommand\norm[1]{\left\lVert#1\right\rVert}
+\setlength{\parindent}{0cm}
+\setlength{\parskip}{0em}
+\newcommand{\Lim}[1]{\raisebox{0.5ex}{\scalebox{0.8}{$\displaystyle \lim_{#1}\;$}}}
+\newtheorem{definition}{Definition}[section]
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{notation}{Notation}[section]
+\theoremstyle{definition}
+\DeclareMathOperator{\arcsec}{arcsec}
+\DeclareMathOperator{\arccot}{arccot}
+\DeclareMathOperator{\arccsc}{arccsc}
+\DeclareMathOperator{\spn}{Span}
+
+  \newcommand{\T}{\Theta}
+  \newcommand{\Omg}{\Omega}
+\setcounter{tocdepth}{1}
+\begin{document}
+
+\title{Revision notes - MA3252}
+\author{Ma Hongqiang}
+\maketitle
+\tableofcontents\vspace{5cm}
+\textbf{Remark}:\\
+In this note, I will save myself the trouble of typing out pseudocode. It is because
+\begin{itemize}
+  \item Pseudocode is easily accessible from lecture notes and easily reconstructible from \textit{ideas} given.
+  \item I still suck in using \texttt{algorithmic} package.
+\end{itemize}
+I regret this decision of mine has caused inconvenience of you.
+\clearpage
+%\twocolumn
+\section{Preliminaries}
+\begin{definition}[Algorithm]
+\hfill\\\normalfont An algorithm is a sequence of \textbf{unambiguous} instructions for solving a problem, i.e., for obtaining a required \textbf{output} for any legitimate \textbf{input} in a \textbf{finite} amount of time.
+\end{definition}
+Algorithms can be presented in the language of pseudocode. In CS3230, proven of correctness of algorithms is required.\\
+Information about learnt data structure will not appear here. A remark for trees is that the root is at level 0 if level/depth of a node is considered and leaves are at level 0 if height of the node is considered.\\
+There are commonly 4 ways to analyse algorithms, namely
+\begin{itemize}
+  \item Induction
+  \item Recurrence Relations
+  \item Mathematical Tools, and
+  \item Invariants and Loop Invariants
+\end{itemize}
+Information about mathematical preliminaries will not appear here, except for the following useful property:
+\[
+\frac{b^{n+1}-a^{n+1}}{b-a}=\sum_{i=0}^n a^ib^{n-i}\leq (n+1)b^n\;\;\;\text{if }0\leq a<b
+\]
+\subsection{Asymptotic Notations}
+In analysis of algorithms, lower/upper bounds say $f(n)$ considers every input size $n\in\mathbb{N}$. It may not be desirable so most usually \textbf{asymptotic} lower/upper bounds are of interest.\\
+In this subsection, we suppose that $f, g$ are functions obeying $f,g:\mathbb{N}\to\mathbb{N}$.
+\begin{definition}[Asymptotic Upper Bound {$O$}]
+\hfill\\\normalfont We denote $f\in O(g)$ \textit{if and only if} there exists constants $c>0$ and $n_0$ such that for all $n\geq n_0$, $f(n)\leq cg(n)$.
+\end{definition}
+\textbf{Remark}: $c$ does not depend on $n$.
+To show that $f\in O(g)$,
+\begin{enumerate}
+  \item Choose suitable constants $c$ and $n_0$. 
+  \item Show that $f(n)\leq cg(n) \forall n>n_0$.
+  \item QED
+\end{enumerate}
+Similarly we have the following two definition for asymptotic lower and tight boudns.
+\begin{definition}[Asymptotic Lower Bound {$\Omg$}]
+\hfill\\\normalfont We denote $f\in\Omg(g)$ \textit{if and only if} there exists constants $c>0$ and $n_0$ such that for all $n\geq n_0$, $f(n)\geq cg(n)$.
+\end{definition}
+\begin{definition}[Asymptotic Tight Bound {$\T$}]
+\hfill\\\normalfont We denote $f\in\T(g)$ if and only if $f\in O(g)$ and $f\in\Omg(g)$.
+\end{definition}
+\textbf{Remark}: By rights, the definition should contain only the \textit{if} direction. However, the following theorem shows that the we can partition the relationship between $f$ and $g$ into three mutually exclusive cases, which then proves the \text{only if} cases.
+\begin{theorem}
+\hfill\\\normalfont Suppose $\Lim{n\to\infty}\frac{f(n)}{g(n)}=c$.
+\begin{enumerate}[label=(\arabic*)]
+  \item If $c=0$, then $f\in O(g)$ but $f\not\in\Omg(g)$.
+  \item If $c=\infty$, then $f\in\Omg(g)$ but $f\not\in O(g)$.
+  \item If $o<c<\infty$, then $f(n)\in\T(g)$.
+\end{enumerate}
+\end{theorem}
+With this theorem, we can employ limit theorem to prove the bounds.\\
+In the previous definitions, we only need \textbf{one} pair of permissible $(c,n_0)$ pair. The next two definitions requires a permissible $n_0$ for \textbf{all} values of $c$.
+\begin{definition}[Small $o$ and $\omega$ Notation]
+\hfill\\\normalfont We denote $f\in o(g)$ if for all $c>0$, there exists a $x_0$ such that for all $x>x_0$, $f(x)\leq cg(x)$.\\
+We denote $f\in\omega(g)$ if for all $c>0$, there exists a $x_0$ such that for all $x>x_0$, $f(x)\geq cg(x)$.
+\end{definition}
+\subsection{Recurrence Relations}
+Simple recurrence relations can be solved in methods covered in \texttt{CS1231.pdf}.\\
+For difficult recurrence relations, \textbf{induction} is the more permissible method by making an intelligent guess and proving it.\\
+The following master theorem solves bounds for recurrences in the form of
+\[
+T(n)\leq aT(\frac{n}{b})+f(n)\;\;\;\text{where }f(n)=O(n^k)
+\] 
+Here, $a, b, k$ are constants directly read off from the recurrence.
+\begin{theorem}[Main Recurrence Theorem]
+\hfill\\\normalfont For recurrence theorems of the above form, we have
+\[
+T(n)=\begin{cases}
+O(n^k)&\text{ if }a<b^k\\
+O(n^k\log n)&\text{ if }a=b^k\\
+O(n^{\log_ba})&\text{ if }a>b^k
+\end{cases}
+\]
+\end{theorem}
+The theorem is also true for lower bounds and tight bounds, by changing to the corresponding bounds notations.
+\clearpage
+\section{Brute Force}
+Brute force is a problem solving paradigm that directly tackles the problems without worrying about costs.\\
+\subsection{Brute Force Sorting}
+Sorting by brute force include selection sort, bubble sort and insertion sort.\\
+In this section, sorting are performed on 1-indexed array $A[1..n]$, and we sort in increasing order.
+\subsubsection{Selection Sort}
+\textbf{Idea}:
+\begin{itemize}
+\item In each iteration, put the $i$th smallest element in $A[i]$, by swapping the said element with the out-of-order element in $A[i]$.
+\item Since before the $i$th iteration,  the first $i-1$ elements are the $(i-1)$th smallest elements in the correct order, to find the $i$th smallest, just traverse $A[i..n]$ and choose the smallest element in it.
+\end{itemize}
+\textbf{Analysis}:
+\begin{itemize}
+\item Selection sort runs in $\T(n^2)$ for best, worst and average cases.
+\item Selection sort is in place.
+\item Selection sort is not stable.
+\end{itemize}
+\subsubsection{Bubble Sort}
+\textbf{Idea}:
+\begin{itemize}
+\item In each iteration, swap pairwise elements which are out of order, from beginning to end.
+\item After $i$th iteration, the last $i$ elements are sorted.
+\item In $k$th iteration, the largest element unsorted(i.e., in $A[1..n-k+1]$) will be eventually swapped to $A[n-k+1]$.
+\end{itemize}
+\textbf{Analysis}:
+\begin{itemize}
+  \item Bubble sort runs in $\T(n^2)$ for best, worst and average cases.
+  \item In place.
+  \item Stable.
+\end{itemize}
+\subsubsection{Insertion Sort}
+\textbf{Idea}:
+\begin{itemize}
+  \item In $i$th iteration, choose $A[i]$ and compare with all elements in $A[1..i-1]$ from $A[i-1]$ to $A[1]$ and insert into the correct place.
+  \item After $i$ iterations, $A[1..i]$ is sorted.
+\end{itemize} 
+\textbf{Analysis}:
+\begin{itemize}
+  \item Best case: $O(n)$. Worst case: $O(n^2)$.
+  \item In place
+  \item Stable
+\end{itemize}
+\subsection{Sequential Search}
+Sequential search is done by examining all the elements in an array in sequence in looking for an element.\\
+It has best case $O(1)$ and worst case $O(n)$.
+\subsection{String Matching}
+In String matching, a pattern described by $P[1..m]$ is to be matched in a string described by $A[1..n]$.\\
+Brute force matching requires examination of $m$ characters for the first $n-m$ characters.\\
+It has best case $O(m)$ and worst case $\T(mn)$.\\
+It has (surprisingly good) average case $\T(n)$.
+\subsection{All Pair Closest Pair}
+In closest Pair problem, there is a set of $n$ points in $m$-dimensional space.\\
+Brute force method requires computation of all distances, which runs in $\T(n^2m)$.
+\subsection{Convex Hull}
+In convex hull problem, it is required to find the smallest convex hull from a given set of $n\geq 3$ points.\\
+Brute force method requires to union all the lines formed by a pair of points which ensures all other points are on the same side.
+It runs in $\T(n^3)$.
+\subsection{Exhaustive Search}
+Exhaustive search enumerates all the possible cases and consider all of them.\\Some famous problems under exhaustive search method include Travelling Salesman, Knap Sack and more.
+\clearpage
+\section{Divide and Conquer}
+Divide and conquer is another problem-solving paradigm which
+\begin{enumerate}
+  \item Divide the problem into parts
+  \item Solve each part
+  \item Combine the solutions
+\end{enumerate}
+Complexity of Divide and Conquer is usually of the form $T(n)=aT\left(\frac{n}{b}\right)+f(n)$.
+\subsection{Merge Sort}
+\textbf{Idea}:
+\begin{enumerate}
+  \item Divide the array into two parts of minimal size difference
+  \item Apply merge sort on each of the part (recursively)
+  \item Merge the two sorted parts.
+\end{enumerate}
+During merge of $(A\mid B)$, to ensure stability, the condition used should be of the form $A[i]\leq B[j]$.
+\textbf{Analysis}:
+\begin{itemize}
+  \item Worst case time complexity: $\T(n\log n)$. Average case also $\T(n\log n)$.
+  \item Stable
+  \item Not in-place. Merge sort uses extra space for merging: $O(n)$.
+\end{itemize}
+\subsection{Quick Sort}
+\textbf{Idea}:
+\begin{enumerate}
+  \item Choose the first element in the array as pivot element
+  \item Partition the arrays into two parts: (1) numbers $<$ pivot \textbf{and} (2) numbers $\geq$ pivot.
+  \item Quick sort the two partitions (recursively).
+\end{enumerate} 
+The implementation of \texttt{partition} is quite intricate.
+\textbf{Analysis}:
+\begin{itemize}
+\item Worst case complexity is $O(n^2)$, and it happens when the array is already sorted.
+\item Best case: $O(n\log n)$, and it happens when each round of partition divides the two parts into if possible, equal or nearly equal (difference $\leq 1$) size.
+\end{itemize}
+\subsection{Randomised Quick Sort}
+Randomised quick sort is an improved variant from the quick sort, where the pivot element is now chosen randomly and swapped with the first element, before we apply the same \texttt{partition} routine.
+\textbf{Analysis}:
+\begin{itemize}
+  \item Worst-case runtime is still $O(n^2)$.
+  \item Average-case runtime is now $\T(n\log n)$. 
+  \item In place. Space efficiency is $O(n)$.
+  \item Not stable, due to the swapping protocol. Example: $3,3,2$ with first pivot $2$.
+\end{itemize}
+In fact, by the method of decision tree, we can show that any comparison-based sorting algorithm is $\Omg(n\log n)$.
+\subsection{Binary Search}
+Binary search takes in a sorted array. Therefore, only one half of the array will be relevant to continuation for every iteration.\\
+\textbf{Idea}:
+\begin{enumerate}
+  \item Find the element at the middle of the array.
+  \item Compare with the key $K$ to decide which subarray to continue.
+  \item Binary search on the subarray.
+\end{enumerate}
+\textbf{Analysis}:
+\begin{itemize}
+  \item Time complexity $O(\log n)$.
+\end{itemize}
+\subsection{Tiling Problem}
+\begin{theorem}
+\hfill\\\normalfont Let $n=2^k$ for some $k\in \mathbb{N}$. A $n\times n$ square board with one of the $1\times 1$ square missing can be tiled by tromino.
+\end{theorem}
+\begin{theorem}
+\hfill\\\normalfont For $n>11$, any $n\times n$ board with one square missing can be tiled with trominoes if
+\begin{itemize}
+  \item $n$ is odd, and
+  \item $n$ is not a multiple of $3$
+\end{itemize}
+\end{theorem}
+\subsection{Binary Tree}
+\begin{definition}[Binary Tree]
+\hfill\\\normalfont Binary tree is either empty or consists of root, left binary subtree and right binary subtree.
+\end{definition}
+\begin{definition}[Full Binary Tree]
+\hfill\\\normalfont A binary tree is a \textbf{full} binary tree if there are either no or two children for each node.
+\end{definition}
+\begin{theorem}
+For a full binary tree, number of leaves $l$ and number of internal nodes $i$ follows the relation of
+\[
+i=l-1
+\]
+\end{theorem}
+\subsubsection{Height of Binary Tree}
+Base case: Height of single node is $0$.\\
+Height of a tree is $-1$ if the tree is \texttt{null} and is $\max\{\text{height(left subtree), height(right subtree)}\}+1$ otherwise.\\
+\textbf{Analysis}: Total complexity $\T(n)$.
+\subsubsection{Traversal}
+There are three types of traversal:
+\begin{itemize}
+	\item Preorder, where node is traversed before its children\\
+	\texttt{if(T $\neq$ null) \{visit(T); preorder(left(T)); preorder(right(T))\}}
+	\item Inorder, where node is traversed in between its children\\
+	\texttt{if(T $\neq$ null) \{inorder(left(T)); visit(T); inorder(right(T));\}}
+	\item Postorder, where node is traversed after its children\\
+	\texttt{if(T $\neq$ null) \{postorder(left(T)); postorder(right(T)); visit(T);\}}
+\end{itemize}
+\subsection{Multiplication of Large Numbers}
+Suppose $x, y$ are two base-10 number of $n$ digit long, and $n$ is a power of 2. Then we can perform $x\times y$ fast by
+\begin{itemize}
+	\item Write $x = x_1\times 10^\frac{n}{2}+x_0$, i.e., $x_1$ is the first half of $x$, where $x_0$ is the second half. Write $y$ in the similar fashion $y_1\times 10^\frac{n}{2}+y_0$.
+	\item Then $z=x\times y = (x_1\times 10^\frac{n}{2}+x_0)(y_1\times 10^\frac{n}{2}+y_0) :=z_2\times 10^n +z_1\times 10^\frac{n}{2}+z_0$.
+	\item Here $z_2 = x_1\times y_1$, $z_0 = x_0\times y_0$.
+	\item The trick to obtain $z_1$ is $z+1 = (x_1+x_0)\times(y_1+y_0)-(z_2+z_0)$.
+\end{itemize}
+\textbf{Analysis}:\\
+\begin{itemize}
+	\item $M(n) = 3M(\frac{n}{2})$, for $n>1$ and $M(1)=1$.
+	\item $A(n) = 3A(\frac{n}{2})+ cn$, for $n>1$ and $A(1) = 1$.
+	\item $M(n)\in \T(n^{\log_2 3})$ and $A(n)\in \T(n^{\log_2 3})$.
+\end{itemize}
+This is faster than the naive $\T(n^2)$ algorithm learnt in primary school. 
+\subsection{Multiplication of Matrix}
+The idea used for large number multiplication is also applicable to matrix multiplication. Note that the naive multiplication by row and column expansion is of $O(n^3)$ time complexity.
+\begin{theorem}[Strassen's Algorithm]
+\hfill\\\normalfont Suppose $A, B$ are two matrix of dimension $n\times n$ and $n$ is a power of 2. 
+We divide $A, B$ into four submatrices:
+\[
+A=\begin{pmatrix} a_{11}&a_{12}\\a_{21}&a_{22}\end{pmatrix}\;\;\;B=\begin{pmatrix} b_{11}&b_{12}\\b_{21}&b_{22}\end{pmatrix}
+\]
+and conquer the multiplication by calculating
+\begin{align*}
+q_1&=(a_{11}+a_{22}\times(b_{11}+b_{22}))\\
+q_2&=(a_{21}+a_{22})\times b_11\\
+q_3&=a_{11}\times(b_{12}-b_{22})\\
+q_4&=a_{22}\times(b_{21}-b_{11})\\
+q_5&=(a_{11}+a_{12})\times b_{22}\\
+q_6&=(a_{21}-a_{11})\times(b_{11}+b_{12})\\
+q_7&=(a_{12}-a_{22})\times(b_{21}+b_{22})
+\end{align*}
+which gives
+\[
+AB = \begin{pmatrix}
+q_1+q_4-q_5+q_7 & q_3+q_5\\\hline
+q_2+q_4 & q_1+q_3-q_2+q_6
+\end{pmatrix}
+\]
+\end{theorem}
+\textbf{Analysis}:\\
+\begin{itemize}
+	\item $M(n)=7M(\frac{n}{2})$, $M(1)=1$, so $M(n)\in \T(n^{\log_2 7})$.
+	\item $A(n)=7A(\frac{n}{2})+O(n^2)$, $A(1)=0$, so $A(n)\in \T(n^{\log_2 7})$.
+\end{itemize}
+\subsection{Finding Closest Pair of Points on a Plane}
+Given $n$ points on a plane where $a,b$ are non-negative rational numbers, one closest pair of points can be chosen using the following algorithm:
+\begin{enumerate}
+	\item Find $x_c$, the median of the $x$-coordinates of the points.
+	\item Divide the points into two groups of (nearly) equal size based on them having $x$-coordinate $\leq x_c$ or $\geq x_c$. The way to divide points with $x=x_c$ needs to be consistent throughout all divisions.
+	\item Find closest pair among each of the two groups inductively.
+	\item Let the closest pair have distance $\delta$.
+	\item Consider all points whic have $x$-coordinate between $x_c-\delta$ and $x_c+\delta$ and sort them according to the $y$-coordinate
+	\item For each point, find the distance between it and the next $7$ points in the list as formed in step (5).
+	\item Report the shortest distance among all the distance found above, and $\delta$.
+\end{enumerate}
+The proof of correctness relies on the partition of $[x-\delta, x+\delta]\times[y,y+\delta]$ into 8 $[0, \frac{\delta}{2}]\times [0, \frac{\delta}{2}]$ subregions, and we cannot have duplicate points within each region due to the minimum distance $\delta$ constraint.
+\textbf{Analysis}: If sorting of all the points is done beforehand, we have $T(n)\leq 2T(\frac{n}{2})+cn$ which in turn gives $T(n)\in O(n\log n)$.
+\clearpage
+\section{Dynamic Programming}
+The basic idea of dynamic programming is memoisation. Usually relation of $f(n)$ with other values can be described nicely in a recursion.
+\subsection{Fibonacci Numbers}
+\[
+F(n)=F(n-1)+F(n-2), \;\;F(1)=F(2)=1
+\]
+We can solve $F(n)$ using $O(1)$ space and $O(n)$ time using iteration with two shifting temporary variables.
+\subsection{Binomial Coefficients}
+\[
+C(n,k) = C(n-1, k-1)+C(n-1, k),\text{ for }n>k>0
+\]
+Base case is $C(n, 0) = C(n,n) = 1$.\\
+\textbf{Analysis}: Both time and space complexity is $\T(nk)$.
+\subsection{Transitive Closure}
+Transitive closure can be used to determine if there is a non-trivial directed path from node $i$ to node $j$.
+\begin{theorem}[Warshall's Algorithm]
+\hfill\\\normalfont Suppose $A$ is the adjacency matrix of the directed graph, let $R^k(i,j)$ denotes whether there is a path from $i$ to $j$ which has intermediate vertices only among $\{1,2,\ldots, k\}$. We have
+\begin{itemize}
+	\item $R^{0}(i,j)=A$.
+	\item $R^{k}(i,j)=1\Rightarrow R^{k+1}(i,j)=1$.
+	\item Also, $R^k(i,k+1)=1$ and $R^k(k+1, j)=1$ implies $R^{k+1}(i,j)=1$.
+\end{itemize}
+Therefore, $R^0$ up to $R^{n-1}$ can be computed.\\
+\textbf{Analysis}: Time complexity $O(n^3)$.
+\end{theorem}
+\subsection{All Pair Shortest Path}
+We here assume that there is no negative circuits in teh graph. Otherwise, the all pair shortest path will be undefined due to $-\infty$ cost value for some of the path.
+\begin{theorem}[Floyd's Algorithm]
+\hfill\\\normalfont We define $D_k[i,j]$ as the length of the shortest path from $i$ to $j$ where the intermediate vertices are all $\leq k$. \\
+Clearly, $D_0[i,j]=A[i,j]$. Here we assume $A[i,j]=\infty$ if there is no path from $i$ to $j$ and $A[i,i]=0$ for all $i$.\\
+The idea is to loop through $k$, then $i$ and $j$, and if $D[i,j]>D[i,k]+D[k,j]$, 
+\begin{align*}
+D[i,j]&\leftarrow D[i,k]+D[k,j] \text{ if }D[i,j]>D[i,k]+D[k,j]\\
+\text{next}[i,j]&\leftarrow \text{next}[i,k]
+\end{align*}
+\end{theorem}
+\subsection{$0/1$ Knapsack Problem}
+It is a simpliciation of the general knapsack problem, where the weights $W_1,\ldots, W_n$ of objects $O_1,\ldots, O_n$ all have integral values. Further assume objects have values $V_1,\ldots V_n$. The maximum capacity is $C$.\\
+We hope to find a set $S\subseteq\{1,\ldots, n\}$ such that $\sum_{i\in S}W_i\leq C$ and $\sum_{i\in S}V_i$ is maximised.\\
+The base case is $F(C,0)=0$. If $W_j\leq C$ then, $F(C,j)=\max(F(C,j-1),F(C-W_j,j-1)+V_j)$; else, $F(C,j)=F(C,j-1)$.\\
+We fill the DP table by looping through $s=0$ to $C$ then $j=1$ to $n$.\\
+We maintain whether an item is used in $\text{Used}(s,j)$, and its value equals \texttt{!F(s,j)==F(s,j-1)}.\\
+We can backtrack the item picked by looping down $j=n$ to $1$ of $\text{Used}(\texttt{left}, j)$ and update \texttt{left=left-$W_j$} if $\text{Used}(\texttt{left}, j)$ is \texttt{true}.
+\subsection{Coin Changing using DP}
+Given some denominations $d[1]>d[2]>\cdots>d[n]=1$, we want to find the minimal number of coins needed to make change for certain amount $S$.\\
+Let $C[i,j]$ denote the number of coins needed to obtain value $j$, when one only uses coins $d[i],\ldots, d[n]$. Clearly, $C[n,j]=j$, for $0\leq j\leq S$.\\
+We also have $C[i-1,j] = \min(1+C[i-1,j-d[i-1]], C[i,j])$. We set $\text{used}[i-1,j]$ to be \texttt{true} if the former term is fewer.\\
+The algorithm runs in $\T(S\times n)$.\\
+To get the number of each type of coins used, we look at denominator $d[1]$ first, and recurse up to $d[n]$.
+\subsection{Matrix Multiplication}
+Suppose we have matrices $M_j$ with $r_j$ rows and $c_j$ columns, for $1\leq j\leq n$, where $c_j=r_{j+1}$m for $1\leq j<n$. We want to compute $M_1\times \cdots \times M_n$ using the least number of multiplication.\\
+Let $F(i,j)$ denote the minimum number of operations needed to compute $M_i\times \cdots\times M_j$, then $F(i,j)$ is minimal over $k$($i\leq k<j$) of $F(i,k)+F(k+1,j)+\underbrace{r_ic_kc_j}_{\text{cost of multiplication the two components}}$.\\
+The base case is $F(i,i)=0$ for $1\leq i\leq n$. We calculate $F(i,j)$ in the skew diagonal fashion.\\
+The time complexity is $O(n^3)$.
+\subsection{Longest Common Subsequence}
+\begin{definition}[Subsequence]
+\hfill\\\normalfont A subsequence of a sequence $a[1], a[2],\ldots, a[n]$ is a sequence of the form $a[i_1], a[i_2],\ldots, a[i_k]$ such that $1\leq i_1<i_2<\cdots <i_k\leq n$.
+\end{definition}
+In the problem of Longest Common Subsequence, we have two string $x[1..n]$ and $y[1..m]$. We hope to find the longest common subsequence of the above two sequences.\\
+The idea is
+\begin{itemize}
+  \item If $x[n]=y[m]$, the longest common subsequence is (the longest common subsequence of $x[1..n-1]$ and $y[1..m-1]$)$\oplus x[n]$.
+  \item If not, then the longest common subsequence is the longer of
+  \begin{itemize}
+    \item the longest common subsequence of $x[1..n]$ and $y[1..m-1]$ or
+    \item the longest common subsequence of $x[1..n-1]$ and $y[1..m]$.
+  \end{itemize}
+\end{itemize}
+Let $F(i,j)$ be the length of longest common subsequence of $x[1..i]$ and $y[1..j]$. The base case is $F[i,j]=0$ for either $i=0$ or $j=0$. The recursive case is described above.\\
+The time complexity for this algorithm is $\T(mn)$.\\
+The longest common subsequence can be recovered by the information of $F$.
+\clearpage
+\section{Greedy Algorithm}
+\subsection{Coin Changing Problem}
+The idea behind greedy solution is to pick the largest denomination until it cannot be picked any more, and then pick the next permissible largest denomination. This algorithm is optimal for certain denomination combination but not optimal in general.
+\subsection{Fractional Knapsack}
+In fractional knapsack, there is a knapsack of certain capacity $S$ and various items. Item $i$ has weight $w_i$ and has total worth $c_i$. Any item can be taken in fraction, and it will receive fractional value.\\
+The greedy solution picks the item with largest $\frac{c_i}{w_i}$ as much as possible and proceeds on until the knapsack is full.\\
+This strategy is optimal globally as well.\\
+It runs in $O(n\log n)$ due to the sorting of relative value, but $O(n)$ for the main part.
+
+\end{document}

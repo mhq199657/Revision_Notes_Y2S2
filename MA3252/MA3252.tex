@@ -1,0 +1,627 @@
+\PassOptionsToPackage{svgnames}{xcolor}
+\documentclass[12pt]{article}
+
+
+
+\usepackage[margin=1in]{geometry}  
+\usepackage{graphicx}             
+\usepackage{amsmath}              
+\usepackage{amsfonts}              
+\usepackage{framed}               
+\usepackage{amssymb}
+\usepackage{array}
+\usepackage{amsthm}
+\usepackage[nottoc]{tocbibind}
+\usepackage{bm}
+\usepackage{enumitem}
+
+
+\DeclareMathOperator{\Tr}{Tr}
+ \newcommand{\im}{\mathrm{i}}
+  \newcommand{\diff}{\mathrm{d}}
+  \newcommand{\col}{\mathrm{Col}}
+  \newcommand{\row}{\mathrm{R}}
+  \newcommand{\kerne}{\mathrm{Ker}}
+  \newcommand{\nul}{\mathrm{Null}}
+  \newcommand{\nullity}{\mathrm{nullity}}
+  \newcommand{\rank}{\mathrm{rank}}
+  \newcommand{\Hom}{\mathrm{Hom}}
+  \newcommand{\id}{\mathrm{id}}
+  \newcommand{\ima}{\mathrm{Im}}
+  \newcommand{\lcm}{\mathrm{lcm}}
+  \newcommand{\st}{\mathrm{s.t.}}
+  \newcommand{\T}{\mathrm{T}}
+  \newcommand{\va}{\mathbf{a}}
+  \newcommand\norm[1]{\left\lVert#1\right\rVert}
+\setlength{\parindent}{0cm}
+\setlength{\parskip}{0em}
+\newcommand{\Lim}[1]{\raisebox{0.5ex}{\scalebox{0.8}{$\displaystyle \lim_{#1}\;$}}}
+\newtheorem{definition}{Definition}[section]
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{notation}{Notation}[section]
+\theoremstyle{definition}
+\DeclareMathOperator{\arcsec}{arcsec}
+\DeclareMathOperator{\arccot}{arccot}
+\DeclareMathOperator{\arccsc}{arccsc}
+\DeclareMathOperator{\spn}{Span}
+\DeclareMathOperator{\x}{\mathbf{x}}
+\setcounter{tocdepth}{1}
+\begin{document}
+
+\title{Revision notes - MA3252}
+\author{Ma Hongqiang}
+\maketitle
+\tableofcontents
+
+\clearpage
+%\twocolumn
+\section{Introduction to Linear Programming}
+\subsection{Learnt optimisation methods}
+\begin{enumerate}
+  \item \[
+\min_{x\in\mathbb{R}}f(x), \text{where } f:\mathbb{R}\to\mathbb{R}
+  \]
+Solution: Find $x$ such that $f'(x)=0$.
+\item \[
+\min_{\mathbf{x}\in \mathbb{R}^n}f(\mathbf{x})=f(x_1,\ldots, x_n),\text{where } f:\mathbb{R}^n\to\mathbb{R}
+\]
+Solution: Find $\mathbf{x}$ such that $\nabla f(\mathbf{x})=\mathbf{0}$
+\item \begin{alignat*}{3}
+&\min_{\mathbf{x}\in \mathbb{R}^n}&&f(\mathbf{x})\\
+&\st &&g_k(\mathbf{x})=g_k(x_1,\ldots, x_n)=0\text{ for }k=1,\ldots, m
+\end{alignat*}
+Solution: Lagrange multiplier (See \texttt{MA1104.pdf})
+\end{enumerate}
+\begin{definition}[Optimisation Problem]
+\hfill\\\normalfont A general optimisation problem is of the form
+\begin{alignat*}{3}
+&\min_{\mathbf{x}\in\mathbb{R}^n}&& f(\mathbf{x})\\
+&\st&&x\in P
+\end{alignat*}
+where $P\subset\mathbf{R}^n$ is a feasible region.
+\end{definition}
+\subsection{Prerequisite for Linear Programming}
+\begin{itemize}
+\item For linear programming, the inner product is the standard inner product(See \texttt{MA2101.pdf}) over $\mathbf{R}^n$.
+\item In $\mathbb{R}^2$(resp. $\mathbb{R}^3$, $\mathbb{R}^n$), $\{\x\mid \mathbf{a}^\T\x=b\}$ is line(resp. plane, hyperplane) with normal vector $\mathbf{a}$.
+\item For $\{\x\mid \mathbf{a}^\T\x=b\}$, vector $\mathbf{a}$ corresponds to direction of increasing $\mathbf{c}^\T\x$.
+\item The inequality $\mathbf{a}_i^\T\x\leq b_i$ represents a halfspace. We refer to $\mathbf{a}_i$ as the \textbf{normal vector} for half spaces specified in this form.
+\end{itemize}
+To draw a halfspace of the form $\{\x\mid \mathbf{a}^\T\x\leq b\}$, 
+\begin{enumerate}
+  \item Draw the line $\mathbf{a}^\T\x = b$.
+  \item Draw the normal vector $\mathbf{a}$.
+  \item Colour the region in the opposite direction of $\mathbf{a}$.
+\end{enumerate}
+\subsection{Linear Programming in Low Dimensions}
+\begin{definition}[Linear Programming]
+\hfill\\\normalfont A \textbf{linear programming} problem is of the form
+\begin{alignat*}{3}
+&\min_{\x\in\mathbb{R}^n}(\text{or }\max)&&\mathbf{c}^\T\x\\
+&\st&&\mathbf{a}_i^\T\x\geq b_i\text{ for some }i\\
+&&&\mathbf{a}_i^\T\x\leq b_i\text{ for some }i\\
+&&&\mathbf{a}_i^\T\x=b_i\text{ for some }i\\
+&&&x_j\geq 0\text{ for some }j\\
+&&&x_j\leq 0\text{ for some }j\\
+&&&x_j\in\mathbb{R}\text{ for some }j
+\end{alignat*}
+where $\mathbf{a}_i=(a_{i,1},a_{i,2},\ldots, a_{i_n})^\T\in\mathbb{R}^n, b_i\in\mathbb{R}$. We require the constraints to be \textbf{finite}.\\
+Notation wise,
+\begin{itemize}
+\item $\mathbf{c}=(c_1,\ldots, c_n)^\T\in\mathbb{R}^n$ is called \textbf{cost} vector. 
+\item The function $\mathbf{c}^\T\x$ is called the \textbf{objective function}.
+\item The $n$ variables $x_i$ are called \textbf{decision variables}/
+\item A vector $\x$ satisfying all constraints is a \textbf{feasible solution}.
+\item The \textbf{feasible set} is the set of all feasible solutions.
+\item A feasible solution $\x^\ast$ that minimises objective function is an \textbf{optimal solution}.
+\item The value $\mathbf{c}^\T\x^\ast$ is \textbf{optimal objective value}.
+\end{itemize}
+\end{definition}
+To solve a linear minimisation problem in $\mathbb{R}^2$,
+\begin{enumerate}
+  \item Sketch the feasible region
+  \item Find an optimal solution graphically by shifting $\mathbf{c}^\T\x$ in the direction of $-\mathbf{c}$.
+\end{enumerate}
+\textbf{Remark}:
+\begin{itemize}
+  \item For a minimisation problem, the cost is \textbf{unbounded} if for every $K\in\mathbb{R}$, there is a feasible $\x$ such that $\mathbf{c}^\T\x<K$. Equivalently, we say that the optimal cost is $-\infty$. The case for maximisation problem is similar.
+  \item For a LP problem, the problem is \textbf{infeasible} if the feasible set is empty. Equivalently, the objective value is $\infty$ for minimisation problem and $-\infty$ for maximisation problem.
+  \item There are four possibilities for an LP: (1) Unique solution (2) Multiple optimal solutions (3) Optimal cost unbounded and (4) Infeasible
+  \item $\max\mathbf{c}^\T\x=-\min-\mathbf{c}^\T\x$
+\end{itemize}
+\subsection{Compact Form}
+Every constraint can be translated into the form of $\va_i^\T\x\geq b_i$.
+\begin{table}[h]
+\centering
+\begin{tabular}{|c|c|}
+\hline From & To \\\hline
+$\va_i^\T\x\leq b_i$&$(-\va_i)^\T\x\geq -b_i$\\\hline
+$x_j\geq 0$ & $\mathbf{e}_j^\T\x\geq 0$\\\hline
+$\va_i^\T\x = b$ & $\va_i^\T\x\geq b_i$ and $(-\va_i)^\T\x\geq - b_i$\\\hline
+\end{tabular}
+\end{table}
+As such, we can write the constraint in the form of $\mathbf{Ax}=\mathbf{b}$ where $\mathbf{A}=\begin{pmatrix}\va_1^\T\\\vdots\\\va_m^\T\end{pmatrix}$ and $\mathbf{b}=\begin{pmatrix} b_1\\\vdots\\b_m\end{pmatrix}$.
+\begin{definition}[Compact Form]
+\hfill\\\normalfont A LP is in compact form when it is of the form
+\begin{alignat*}{3}
+&\min_{\x\in\mathbb{R}^n}&& \mathbf{c}^\T\mathbf{x}\\
+&\st&&\mathbf{Ax}\geq \mathbf{b}
+\end{alignat*}
+\end{definition}
+\subsection{Standard Form}
+\begin{definition}[Standard Form]
+\hfill\\\normalfont A LP of the form
+\begin{alignat*}{3}
+&\min_{\x\in\mathbb{R}^n} &&\mathbf{c}^\T\mathbf{x}\\
+&\st&&\mathbf{Ax}=\mathbf{b}\\
+&&&\x\geq \mathbf{0}
+\end{alignat*}
+is said to be in the standard form.
+\end{definition}
+Three defining characteristics of standard form is
+\begin{itemize}
+  \item Minimisation objective 
+  \item Equality constraints 
+  \item Nonnegative variables
+\end{itemize}
+\begin{theorem}[Conversion to Standard Form]
+\hfill\\\normalfont To convert an LP to standard form
+\begin{enumerate}
+  \item Eliminate inequality constraint by \textbf{introducing slack variable}.\\
+  For example, $\va_i^\T\x\leq b_i$ becomes $\va_i^\T\x = b_i$ with $s_i\geq 0$.
+  \item Eliminate nonpositive variables by \textbf{replacing} $x_i$ \textbf{by} $-x_i^-$ for all $x_i\leq 0$.
+  \item Eliminate free variables by \textbf{replacing} $x_i$ \textbf{by} $x_i^+-x_i^-$, where $x_i^+, x_i^-\geq 0$. 
+\end{enumerate}
+\end{theorem}
+\textbf{Remark}: In general, feasible set $\{\x\in\mathbb{R}^n:\mathbf{Ax}=\mathbf{b}, \x\geq 0\}$ where $\mathbf{R}\in\mathbb{R}^{m\times n}, m<n$ of a standard form LP is the intersection between
+\begin{itemize}
+\item a $(n-m)$-dimensional subset $\{\x\in\mathbb{R}^n: \mathbf{Ax}=\mathbf{b}\}$, and
+\item constraints: $x_i\geq 0, i=1,\ldots, m$.
+\end{itemize}
+Next, we show some convex objective functions can also be modelled using LP.
+\begin{definition}[Convex sets]
+\hfill\\\normalfont A set $S\subset \mathbb{R}^n$ is convex if for every $\x,\mathbb{y}\in S$ and every $\lambda\in[0,1]$, we have $\lambda\x+(1-\lambda)\mathbf{y}\in S$.
+\end{definition}
+\begin{definition}[Convex Combination]
+\hfill\\\normalfont $\mathbf{x}\in\mathbb{R}^n$ is a convex combination of $\x^1,\ldots, x^k\in\mathbb{R}^n$ if and only if
+\[
+x=\sum_{i=1}^k \lambda_i\x^i
+\]
+where $\lambda_i\in[0,1]$ are such that $\sum_{i=1}^k \lambda_i=1$.
+\end{definition}
+\begin{definition}[Convex Hull]
+\hfill\\\normalfont The convec hull of $\x^1,\ldots, \x^k$ is the set
+\[
+\text{conv}(\x^1,\ldots, \x^k):=\{x\in\mathbb{R}^n:\x \text{ is a convex combination of} x^1,ldots, x^k\}
+\]
+\end{definition}
+\begin{definition}[Convex Function]
+\hfill\\\normalfont A convex function satisfies
+\[
+f(\lambda\x+(1-\lambda\mathbf{y}))\leq \lambda f(\x)+(1-\lambda)f(\mathbf{y})
+\]
+for all $\x,\mathbf{y}\in\mathbb{R}^n, \lambda\in[0,1]$.
+\end{definition}
+\textbf{Remark}: $f$ is concave if and only if $-f$ is convex.\\
+\begin{theorem}[Convexity of Affine function]
+\hfill\\\normalfont Affine function $f(\x)=d+\mathbf{c}^\T\x$ is both convex and concave.
+\end{theorem}
+\begin{theorem}
+\hfill\\\normalfont Let $f_1,\ldots, f_m:\mathbb{R}^n\to\mathbb{R}^n$ be convex functions. Then the function
+\[
+f(\x):=\max_{i=1,\ldots, m} f_i(\x)
+\]
+is also convex.
+\end{theorem}
+Therefore, piecewise affine function $\max_{i=1,\ldots, m}(\mathbf{c}_i^\T\x+d_i)$ is convex.\\
+In the case of optimsation of the form $\min\max(f(\x), g(\x))$, we transform the optimisation into 
+\begin{alignat*}{3}
+&\min&&\;t\\
+&\st &&t\geq f(\x)\\
+&&&t\geq g(\x)\\
+&&&\text{Rest constraints}
+\end{alignat*}
+\clearpage
+\section{Geometry of Linear Programming}
+\begin{definition}[Polyhedron]
+\hfill\\\normalfont A polyhedron is a set of the form $\{\x\in\mathbb{R}^n:\mathbf{Ax}\leq \mathbf{b}\}$ where $\mathbf{A}\in\mathbf{R}^{m\times n}$ and $\mathbf{b}\in\mathbf{R}^m$.
+\end{definition}
+Geometrically, a polyhedron is a finite intersection of half spaces specified by half spaces.\\
+From definition of standard form LP, the feasible region for a standard form LP is a polyhedron.
+\begin{definition}[Extreme Point]
+\hfill\\\normalfont Consider a convex set $P\in\mathbb{R}^n$. A point $\x^\ast\in\P$ is a extreme point of $P$ if whenever points $\mathbf{y}$ and $\mathbf{z}\in P$ and scalar $\lambda\in(0,1)$ are such that $\x^\ast = \lambda\mathbf{y}+(1-\lambda)\mathbf{z}$, we have $\mathbf{y}=\mathbf{z}=\x$.\
+\end{definition}
+\begin{definition}[Vertex]
+\hfill\\\normalfont A point $\x^\ast\in P$ is a vertex of $P$ if there is a $\mathbf{c}\in\mathbb{R}$ such that 
+\[
+\mathbf{c}^\T\x^\ast>\mathbf{c}^\T\mathbf{y}\text{ for all }\mathbf{y}\in P\setminus\{\x\}
+\]
+\end{definition}
+\begin{definition}[Basic Feasible Solution(BFS)]
+\hfill\\\normalfont Consider $\x^\ast \in\mathbb{R}$ and constraint $\va_i^\T\x </=/> b_i$. If $\va_i^\T\x=b_i$, we say that this constraint is \textbf{tight at} $\x^\ast$.\\
+Constraints $\va_i^\T\x\geq b_i, i\in I$ are said to be linearly independent if the corresponding vectors $\va_i, i\in I$ are linearly independent.\\
+$\x^\ast$ is a basic feasible solution of a polyhedron $P$ if $\x^\ast \in P$ and  $n$ linearly independent constraints are active at $\x^\ast$.
+\end{definition}
+\textbf{Remark}:
+\begin{itemize}
+  \item A vector $x^\ast\in\mathbb{R}^n$ is said to be of rank $k$ if the span of collections of $\{\va_i:\va_i^\T\x^\ast = b_i\}$ has dimension $k$.\\
+  Thus, $\x$ is a BFS iff it has rank $n$ and $\x\in P$.
+  \item A vector $x^\ast\in\mathbb{R}^n$ is a basic solution if it has rank $n$.
+  \item To check whether some $\x\in\mathbb{R}^n$ is BFS, we check that 
+  \begin{enumerate}
+    \item $\x$ is feasible 
+    \item $\x$ is tight for $n$ constraints 
+    \item which are linearly independent
+  \end{enumerate}
+  \item A basic solution $\x\in\mathbb{R}^n$ is degenerate if more than $n$ constraints are active at $\x$.
+\end{itemize}
+The next theorem shows the equivalence of these three concepts.
+\begin{theorem}
+\hfill\\\normalfont Let $P$ be a non-empty polyhedron and $\x\in P$. Then the three defintions are equivalent.
+\end{theorem}
+\subsection{Basic Feasible Solution for Standard Polyhedra}
+\begin{definition}[Standard Form Polyhedra]
+\hfill\\\normalfont The polyhedra in the standard form is of the form 
+\[
+P=\{\mathbf{x}\in\mathbb{R}^n\mid \mathbf{Ax}=\mathbf{b}, \x\geq 0\}\text{ where }\mathbf{A}\in \mathbb{R}^{m\times n}
+\] 
+\end{definition}
+We further assume
+\begin{enumerate}
+  \item $m$ rows of matrix $A$ are linearly independent, and
+  \item $m\leq n$
+\end{enumerate}
+Next is an equivalent definition of basic solution of standard form polyhedron.
+\begin{theorem}[Equivalent Basic Solution Definition]
+\hfill\\\normalfont We say that a vector $\x^\ast\in\mathbb{R}^n$ is a \textbf{basic solution} of the standard form polyhedron $P$ as speicified above if
+\begin{enumerate}
+  \item $\mathbf{Ax}^\ast = \mathbf{b}$ and
+  \item There exist indices $B(1), B(2), \ldots, B(m)$ such that:
+  \begin{enumerate}
+    \item The columns $\mathbf{A}_{B(1)}, \ldots, \mathbf{A}_{B(m)}$ are linearly independent, and
+    \item $\mathbf{x}_i^\ast = 0$ for $i\not\in \{B(1), \ldots, B(m)\}:=\ima(B)$.
+  \end{enumerate}
+\end{enumerate}
+\end{theorem}
+\begin{definition}[More Terminologies]
+\hfill\\\normalfont
+We call variable $x_{B(1)},\ldots, x_{B(m)}$ \textbf{basic variables} and $x_i, i\not\in \ima(B)$ nonbasic variables.\\
+$B$ in subscript denotes the image of $B$ and $N$ denotes ${1,\ldots, n}\setminus B$.\\
+The vector $\x_B\in \mathbb{R}^m$ is defined with the basic variables
+\[
+\x_B = \begin{pmatrix}x_{B(1)}\\\vdots\\x_{B(m)}\end{pmatrix}
+\]
+The matrix $\mathbf{B}\in \mathbb{R}^{m\times m}$ is obtained by concatenating the $m$ basic columns and is called a \textbf{basis matrix}
+\[
+\mathbf{B}=\begin{pmatrix} \mathbf{A}_{B(1)}&\cdots&\mathbf{A}_{B(m)}\end{pmatrix}
+\]
+Note that $\mathbf{B}$ is invertible and $\mathbf{Bx}_B= \mathbf{b}$, so $\x_B = \mathbf{B}^{-1}\mathbf{b}$.\\
+We define the basis to be the set of independent columns: $\{\mathbf{A}_{B(1)}, \ldots, \mathbf{A}_{B(m)}\}$, where $\mathbf{A}_i$ denotes the $i$th column.\\
+Matrix $\mathbf{A}\in\mathbb{R}^{m\times n}$ can be partitioned as $(\mathbf{B}\mid \mathbf{N})$.
+\end{definition}
+\begin{theorem}[Procedure for Finding Basic Solution]
+\hfill\\\normalfont Any basic solution can be found using the following steps:
+\begin{enumerate}
+  \item Choose an admissible basis index set $B=\{b_1, \ldots, b_m\}$ where $|B|=m$ and $\mathbf{A}_{b_i}, b_i\in B$ are linearly independent.
+  \item Write down $\mathbf{B}=\begin{pmatrix}\mathbf{A}_{b_1}&\ldots&\mathbf{A}_{b_m}\end{pmatrix}$ and solve for $\x_B=\mathbf{B}^{-1}\mathbf{b}$.
+  \item Extract information of $(\x_B)_{b_i}$ and write down $\mathbf{x}^\ast$ where $\x^\ast_{b_i}=(\x_B)_{b_i}$ for $b_i\in B$ and $(\x_B)_j = 0$ otherwise.
+  \item $\x^\ast$ is a basic solution.
+  \item If $\x^\ast\geq 0$, then $\x^\ast$ is a basic feasible solution.
+\end{enumerate}
+\end{theorem}
+\begin{definition}[Adjacent Basic Solutions]
+\hfill\\\normalfont Two distinct basic solutions are \textbf{adjacent} \textit{if and only if} one of the following \textit{equivalent} properties hold:
+\begin{enumerate}
+  \item The corresponding bases share all but one basic column; or
+  \item There are a common $n-1$ (but not $n$) linearly independent constraints that are active at both of them. 
+\end{enumerate}
+\end{definition}
+Geometrically, adjacent BFS are extreme points connected by an edge on the boundary.
+\begin{definition}
+\hfill\\\normalfont A polyhedron $P\subset \mathbb{R}^n$ \textbf{contains a line} if there exists $\x^\ast\in P$ and a nonzero $\mathbf{d}\in \mathbb{R}^n$, such that $\x^\ast+\lambda\mathbf{d}\in P$ for all $\lambda\in \mathbb{R}$. 
+\end{definition}
+Geometrically, a polyhedron containing an infinite line does not contain an extreme point.
+\begin{theorem}
+\hfill\\\normalfont Suppose $P=\{\x\in\mathbb{R}^n\mid\mathbf{Ax}\geq\mathbf{b}\}\neq\varnothing$. The following are equivalent:
+\begin{enumerate}
+  \item $P$ does not contain a line.
+  \item $P$ has a BFS.
+  \item $P$ has $n$ linearly independent contraints.
+\end{enumerate}
+\end{theorem}
+Implication: Every nonempty bounded polyhedron and every nonempty standard form polyhedron has at least one BFS.
+\begin{theorem}[Optimality of Basic Feasible Solution]
+\hfill\\\normalfont Consider the LP
+\begin{alignat*}{3}
+&\min_{\mathbf{x}\in\mathbb{R}^n}&& \mathbf{c}^\T\x\\
+&\st&&x\in P, \textbf{ a polyhedron}
+\end{alignat*}
+Suppose $P$ has at least one BFS and LP has an optimal solution. Then there is an optimal solution which is a BFS.
+\end{theorem}
+Implication: To find optimal solutions, it suffices to check BFS.
+\clearpage
+\section{Simplex Method}
+Consider the standard form LP
+\begin{alignat*}{3}
+&\min_{\mathbf{x}\in\mathbb{R}^n}&& \mathbf{c}^\T\x\\
+&\st&&\mathbf{Ax}=\mathbf{b}\\
+&&&\x\geq 0
+\end{alignat*}
+We further assume $\mathbf{A}\in\mathbb{R}^{m\times n}$, $\rank(\mathbf{A})=m$ with $m\leq n$. Let
+\[
+P=\{\x\in\mathbb{R}^n\mid \mathbf{Ax}=\mathbf{b}, \x\geq 0\}
+\]
+Then $P$ does not contain a line due to $\x\geq 0$ constaint. Then by Theorem 2.4, either
+\begin{itemize}
+\item There is an optimal solution which is a BFS(Theorem 2.5), or
+\item The optimal value is unbounded, either $-\infty$ unbounded or $\infty$ infeasible
+\end{itemize}
+We adopt terminologies and notations from the previous chapter.
+\begin{definition}[Feasible Direction]
+\hfill\\\normalfont For a polyhedron $P$, and a point $\x\in P$, a vector $\mathbf{d}$ is a \textbf{feasible direction} if $\x+\theta\mathbf{d}\in P$ for some $\theta>0$.
+\end{definition}
+The standard procedure of solving standard LP involves
+\begin{enumerate}
+  \item calculate feasible directions $\mathbf{d}$ connecting 2 adjacent BFS,
+  \item calculate $\bar{\theta}$ so that from BFS $\x_a$ we get new BFS $\x_a+\bar{\theta}\mathbf{d}$,
+  \item determine if feasible direction lowers objective
+\end{enumerate}
+\begin{theorem}[Computation of {$\mathbf{d}^j$}]
+\hfill\\\normalfont Let $B$ be a basis for $\x$. For $j\in N$ an index outside basis, let $\mathbf{d}^j:=(\mathbf{d}_B^j, \mathbf{d}_N^j)^\T$ be such that
+\begin{enumerate}
+  \item $\mathbf{Ad}^j=\mathbf{0}$, which guarantees $\mathbf{A}(\x+\theta\mathbf{d}^j)=\mathbf{b}$.
+  \item $\mathbf{d}_j^j=1$ and $\mathbf{d}^j_i=0$ for $i\in N\setminus\{j\}$.
+\end{enumerate}
+Then 
+\[
+\mathbf{d}^j_B = -\mathbf{B}^{-1}\mathbf{A}_j
+\]
+\end{theorem}
+The above theorem solve (1). The theorem below tackles (2).
+\begin{theorem}[Computation of {$\bar{\theta}$}]
+\hfill\\\normalfont The largest possible $\bar{\theta}_j$ such that $\x+\bar{\theta}_j\mathbf{d}^j\geq \mathbf{0}$ is
+\[
+\bar{\theta}_j=\min\left\{\frac{(\mathbf{B}^{-1}\mathbf{b})_i}{(\mathbf{B}^{-1}\mathbf{A}_j)_i}\mid i\in B, (\mathbf{B}^{-1}\mathbf{A}_j)_i>0\right\}
+\]
+\end{theorem}
+Should the last condition $\mathbf{B}^{-1}\mathbf{A}_j>0$ not hold, then $\mathbf{d}^j=(-\mathbf{B}^{-1}\mathbf{A}_j, \mathbf{d}_N^j)\geq 0$, and thus $\x+\theta\mathbf{d}^j\geq 0$ for all $\theta\geq 0$ and $\bar{\theta}=\infty$.\\
+\textbf{Remark}: Note that if $l$ is such that $\bar{\theta}_j=\frac{(\mathbf{B}^{-1}\mathbf{b})_l}{(\mathbf{B}^{-1}\mathbf{A}_j)_l}$, then $(\x+\bar{\theta}_j\mathbf{d}^j)_l=0$ and $\x+\bar{\theta}_j\mathbf{d}^j$ is a BFS. Furthermore, $j$ enters basis at that point and $l$ leaves basis.
+\begin{definition}[Reduced Cost {$\bar{c}_j$}]
+\hfill\\\normalfont Let $\x$ be a basic solution. Let $\mathbf{c}=(\mathbf{c}_B, \mathbf{c}_N)$. For each $j\in\{1,\ldots, n\}$, the \textbf{reduced cost} $\bar{c}_j$ of variable $x_j$ is defined by
+\[
+\bar{c}_j=\mathbf{c}^\T\mathbf{d}^j=c_j-\mathbf{c}_B^\T\mathbf{B}^{-1}\mathbf{A}_j
+\] 
+\end{definition}
+\textbf{Remark}: 
+\begin{enumerate}
+\item If $j\in B$, then $\bar{c}_j=0$.
+\item If $\bar{c}_j<0$ and $\bar{\theta}_j>0$ then $\x+\bar{\theta}_j\mathbf{d}^j$ is a guaranteed improved BFS.
+\item If $\bar{c}_j<0$ and $\bar{\theta}_j=\infty$, then problem is unbounded.
+\item Reduced cost indicates if the adjacent BFS improves objective.
+\end{enumerate} 
+\begin{definition}[Degeneracy of BFS]
+\hfill\\\normalfont A BFS is \textbf{nondegenerate} if $\x_B = \mathbf{B}^{-1}\mathbf{b}>0$.
+\end{definition}
+A BFS is \textbf{degenerate} if some elements of $\x_B$ is zero.\footnote{All $\x_B\geq 0$ due to standard form LP.}
+\begin{theorem}[Optimality Conditions]
+\hfill\\\normalfont Consider a BFS $\x$ associated with basis matrix $\mathbf{B}$, and let $\bar{\mathbf{c}}$ be corresponding vector of reduced costs. We have the following results:
+\begin{enumerate}
+  \item If $\bar{\mathbf{c}}\geq 0$, then $\x$ is optimal.
+  \item If $\x$ is optimal and non-degenerate, then $\bar{\mathbf{c}}\geq 0$.
+\end{enumerate}
+\end{theorem}
+\textbf{Remark}: 
+\begin{itemize}
+\item Since $\bar{\mathbf{c}_B}=0$ for all basic variables, to verify whether a BFS is optimal, we only need to check whether $\bar{\mathbf{c}_N}\geq 0$ for all non-basic variables.
+\item For optimality for a maximisation problem, check $\bar{\mathbf{c}}\leq 0$ instead.
+\item For degenerate case, optimal BFS need not have $\bar{\mathbf{c}}\geq 0$.
+\end{itemize} 
+\subsection{Simplex Method}
+The simplex method starts at a BFS, which is guaranteed existence for a feasible standard form LP, and continues with the following iterations:
+\begin{enumerate}
+  \item Start with basis $B$ and its basic columns $\mathbf{A}_B$ and BFS $\x$.
+  \item Compute reduced costs $\bar{c}_j:=c_j-\mathbf{c}_B^\T\mathbf{B}^{-1}\mathbf{A}_j$ for all $j\in N$.
+  \begin{itemize}
+    \item If $\bar{c}_j\geq 0$ for all $j\in N$, the \textbf{current BFS optimal}. END.
+    \item Otherwise, choose some $j_\ast$ for which $\bar{c}_\ast<0$\\
+    The corresponding $x_{j_\ast}$ is the \textbf{entering variable}.
+  \end{itemize}
+  \item Compute $\mathbf{u}=\mathbf{B}^{-1}\mathbf{A}_{j_\ast}$.
+  \begin{itemize}
+    \item If $\mathbf{u}\leq 0$, then problem is \textbf{unbounded}, and algorithm ENDs.
+    \item Otherwise, let $\theta^\ast = \min\{\frac{\x_{B(i)}}{\mathbf{u}_i}\mid u_i>0\}$
+  \end{itemize}
+  \item Let $l$ be such that $\theta^\ast = \frac{\x_{B(l)}}{\mathbf{u}_l}$.\\
+  The corresponding $\x_{B(l)}$ is the \textbf{leaving variable}.
+  \item Form a new basis by replacing $\mathbf{A}_{B(l)}$ with $\mathbf{A}_j$.
+  \item The other basic variables are $\x_{B(i)}-\theta^\ast \mathbf{u}_i$ for all $i\neq l$.
+  \item The entering variable $\x_j$ assumes $\theta^\ast = \frac{\x_{B(l)}}{u_l}$. Go to Step (1).
+\end{enumerate}
+The Simplex Method can be carried out via a tableau. A generic simplex tableau has its initial form of
+\begin{table}[h]
+\centering
+\begin{tabular}{|c|c|c|}
+\hline
+Basic   &$\x$ &Solution\\\hline
+$\bar{\mathbf{c}}$&$\mathbf{c}^\T - \mathbf{c}_B^\T\mathbf{B}^{-1}\mathbf{A}$&$-\mathbf{c}_B^\T\mathbf{B}^{-1}\mathbf{b}$\\\hline
+$\x_B$&$\mathbf{B}^{-1}\mathbf{A}$&$\mathbf{B}^{-1}\mathbf{b}$\\\hline
+\end{tabular}
+\end{table}
+Here, the first column entries can be obtained by the following method.\\
+Note that \begin{align*}
+\bar{\mathbf{c}}&=\mathbf{c}-\mathbf{pA}\text{ where }\mathbf{p}=\mathbf{c}_B^\T\mathbf{B}^{-1}\\
+&=\mathbf{c}-\sum_{i} p_i\mathbf{a}_i
+\end{align*}
+and we have $\mathbf{c}_B=0$ for all basic variable. Therefore, we can solve $\mathbf{p}$ and then obtain $\bar{\mathbf{c}}$.
+\textbf{Remark}: $\mathbf{B}^{-1}$ is obtained by the columns of the $\text{Perm}(I)$, where $\mathbf{B}$ is the final basis matrix.
+\subsubsection{Finding the first BFS to start Simplex Method}
+To find the first BFS that enables Simplex Method, we need to introduce and solve \textbf{auxiliary} LP.
+\begin{definition}[Auxiliary LP]
+\hfill\\\normalfont A standard form LP can be transformed into a auxiliary LP by
+\begin{itemize}
+  \item Inverse the sign for appropriate rows of $\mathbf{A}$ and $\mathbf{b}$ so that $\mathbf{b}\geq 0$.
+  \item Add a set of $m$ artificial variables $y$'s to constraints without positive slack\footnote{so either no slack or have negative slack like $-s_1$.}, and use Simplex method on auxiliary LP:
+  \begin{alignat}{3}
+  &\min&&\sum_{i=1}^m y_i\\
+  &\st&&\mathbf{Ax}+\mathbf{y}=\mathbf{b}\\
+  &&&\x\geq 0\\
+  &&&\mathbf{y}\geq 0
+  \end{alignat}
+  \item Initialise auxiliary LP with $\x = 0$ and $\mathbf{y}=\mathbf{b}$.
+  \item Starting basis matrix is the identity matrix.
+\end{itemize}
+\end{definition}
+After we solve the optimal solution for auxiliary LP as phase I, transfer the column and rows corresponding to basic variables and solution to the phase II, where the original LP is solved. Equivalently speaking, these end basic variables from phase I will be the starting basic variables in phase II.
+\begin{theorem}
+\hfill\\\normalfont We have the following:
+\begin{itemize}
+  \item If LP is infeasible, it is detected at Phase I.
+  \item If LP has optimum, it is detected at Phase II.
+  \item If LP is unbounded, it is detected at Phase II.
+\end{itemize}
+\end{theorem}
+Specifically, if the minimum value of auxiliary LP $\sum y\geq 0$, then at least one of the $y$ cannot be non-basic variables, which indicates infeasibility of original LP.\\
+\subsection{Big-M Method}
+Big-M Method is similar to the simplex method, except that, after the auxiliary LP is constructed, we solve
+\[
+\min \mathbf{c}^\T\x+M\sum_{i=1}^my_i, \text{ where }M\gg 0\
+\]
+If the original LP is feasible and has finite optimal value, then
+\begin{itemize}
+  \item all aritificial variables are eventually driven to zero, and
+  \item the original objective function is minimised
+\end{itemize}
+\subsection{Special Cases}
+\subsubsection{Degeneracy}
+According to the definition of degeneracy, a BFS with one or more zero basic variables is degenerate.\\
+In Simplex Algorithm, a tie in the minimum ratio test leads to degeneracy. This is revealed by a $0$ entry in the solution column for one or more of the basic variables.\\
+Degeneracy may lead to cycling of BFS vistation. Therefore, anti-cycling rules like Bland's rule can be applied.
+\subsubsection{Alternative Optima}
+An LP will have more than one optimal solution, when objective function is parallel to a binding constraint.\\
+In Simplex Algorithm, alternative optima is revealed by a $0$ entry in the reduced cost of a non-basic variable, and some permissible choices of leaving variable\footnote{The ratio test should have at least one denominator $>0$}.\\
+\begin{theorem}[Number of Alternative Optima]
+\hfill\\\normalfont If an LP has $k\geq 2$ optimal BFS $\x^1,\ldots, \x^k$, then the LP has infinitely many optimal solutions.\\
+Moreover, if the set of optimal solutions is bounded, it will be 
+\[
+\text{conv}(\x^1,\ldots, \x^k)
+\]
+\end{theorem}
+\subsubsection{Unbounded Solution}
+Suppose the feasible set is unbounded, then there are three possibilities
+\begin{itemize}
+  \item Finite objective value, bounded optimal set
+  \item Finite objective value, unbounded optimal set\\
+  $\min x_1 \text{ s.t. }x_1>0, x_2>0$
+  \item Optimum value $-\infty$
+  $\min -x_1-x_2\text{ s.t. }x_1>0, x_2>0$
+\end{itemize}
+Unboundedness can be detected if constraint coefficients of a nonbasic variable $x_j$ are all non-positive, which means $x_j$ can be increased to infinity without violating $\x\geq 0$. We can say that $\x$ can move infinitely along the direction of $d^j$.\\
+Moreover, if in addition, $\bar{c}_j<0$, then objective value is $-\infty$.
+\subsubsection{Infeasibility}
+Infeasibility occurs when not all constraints can be satisfied.\\
+Detection infeasibility in two-phase method is done in phase I. Detection in big-M method is to check, after an optimal tableau is obtained, $\mathbf{y}>0$.
+\clearpage 
+\section{Duality Theory}
+\begin{definition}[Dual Problem]
+Given a LP, denoted as \textbf{primal} LP, we associate it with another LP, denoted as \textbf{dual} LP, by following a set of mechanical rules.\\
+Specifically, for given matrix $\mathbf{A}\in\mathbb{R}^{m\times n}$ with rows $\mathbf{a}_i^\T$ and columns $\mathbf{A}_j$, the primal problem on the left has a dual defined on the right.
+\begin{table}[h]
+\centering
+\begin{tabular}{lllllllll}
+(P) &$\min$ &$\mathbf{c}^\T\x$        &           &(D)  &$\max$ &$\mathbf{p}^\T\mathbf{b}$                &&\\
+    &       &$\mathbf{a}^\T\x\geq b_i$&$i\in M_+$ &     &$\st$  &$\mathbf{p}_i\geq 0$                     &$i\in M_+$\\
+    &       &$\mathbf{a}^\T\x\leq b_i$&$i\in M_-$ &     &       &$\mathbf{p}_i\leq 0$                     &$i\in M_+$\\
+    &       &$\mathbf{a}^\T\x= b_i$   &$i\in M_0$ &     &       &$\mathbf{p}_i$ free                      &$i\in M_0$\\
+    &       &$x_j\geq 0$              &$j\in N_+$ &     &       &$\mathbf{p}^\T\mathbf{A}_j\leq c_j$      &$j\in N_+$\\
+    &       &$x_j\leq 0$              &$j\in N_-$ &     &       &$\mathbf{p}^\T\mathbf{A}_j\geq c_j$      &$j\in N_+$\\
+    &       &$x_j$ free               &$j\in N_\mathbb{R}$ &     &       &$\mathbf{p}^\T\mathbf{A}_j=c_j$      &$j\in N_\mathbb{R}$\\
+\end{tabular}
+\end{table}
+\end{definition}
+The above is the conversion rule from the primal LP to the dual LP. Specifically,
+\begin{itemize}
+  \item Dual is ``max'' if primal is ``min'' and vice versa;
+  \item Each constraint corresponds to a dual viariables
+  \item The objective function is formed the 1-norm from RHS of contraints and dual variables
+  \item To each primal variable, form dual constraints as follows:
+  \begin{itemize}
+    \item Take the column in constraints and multiply with each dual variable to form LHS of constraints
+    \item Take the component in objective function to form RHS
+    \item Sign determined from the above conversion rule.
+  \end{itemize}
+  \item The state of each dual variable is determined from table
+\end{itemize}
+\begin{theorem}[The dual of the dual is the primal]
+\hfill\\\normalfont If we transform the dual into an equivalent minimisation LP, and form its dual, then final LP is equivalent to original LP.
+\[
+P\to D \to D' \to DD' \equiv P
+\]
+\end{theorem}
+\textbf{Remark}: An LP can be manipulated into equivalent forms by
+\begin{itemize}
+  \item Introducing slack variables,
+  \item Replacing free variables by difference of nonnegative variables
+\end{itemize}
+These techniques are introduced before during Standard Form LP.
+\begin{theorem}
+\hfill\\\normalfont Duals of equivalent problems are equivalent.\\
+In other words, suppose $P_1\equiv P_2$ and $D_1$ is dual of $P_1$ and $D_2$ dual of $P_2$. Then , $D_1\equiv D_2$.
+\end{theorem}
+\begin{theorem}[Weak Duality]
+\hfill\\\normalfont Suppose the primal LP (P) is a minimisation problem. Then,
+\begin{itemize}
+  \item If $\x$ is feasible in (P) and $\mathbf{p}$ is feasible in (D), then
+  \[
+\mathbf{p}^\T\mathbf{b} \leq \mathbf{c}^\T\x
+  \]
+  In other words, for general primal-dual LP pairs, objective of the minimisation problem is at least the objective of the maximisation problem.
+  \item Thus, 
+  \[
+\sup_{\mathbf{p} \text{ dual feasible}} \mathbf{p}^\T\mathbf{b}\leq \inf_{\x \text{ dual feasible}}\mathbf{c}^\T\x
+  \]
+  i.e., the objective of (P) is at least that of (D).
+\end{itemize}
+\end{theorem}
+\begin{theorem}
+\hfill\\\normalfont Let $\x$ and $\mathbf{p}$ be primal and dual feasible, and $\mathbf{p}^\T\mathbf{b}=\mathbf{c}^\T\x$. Then $\x$ and $\mathbf{p}$ are primal and dual optimal respectively.
+\end{theorem}
+\begin{theorem}
+\hfill\\\normalfont Unboundedness in one problem implies infeasibility in the other.
+\end{theorem}
+\textbf{Remark}: We have the possibilities of primal-dual pairs:
+\begin{table}[h]
+\centering
+\begin{tabular}{c|c|c|c}
+            &Finite Opt.  &Unbounded    &Infeasible\\\hline
+Finite Opt. &$\ast$       &             &          \\\hline
+Unbounded   &             &             &$\ast$    \\\hline
+Infeasible  &             &$\ast$       &$\ast$    
+\end{tabular}
+\end{table}
+\begin{theorem}[Strong Duality]
+\hfill\\\normalfont If an LP has an optimum, so does it dual, and both optimal costs are equal.
+\end{theorem}
+\begin{theorem}[Computation of {$\mathbf{p}^\T$}]
+\hfill\\\normalfont From the previous theorem, we can calculate optimal dual $\mathbf{p}^\T$ in standard form LP by
+\begin{itemize}
+  \item $\mathbf{p}^T = \mathbf{c}_B^\T\mathbf{B}^{-1}$, where $B$ is an optimal basis for the primal LP. This optimal basis can be derived at the termination of Simplex Method.
+  \item If there is a basis $B_0$ such that $\mathbf{A}_{B_0}=\mathbf{I}$, then
+  \[
+\bar{\mathbf{c}}_{B_0}^\T = \mathbf{c}_{B_0}^\T - \mathbf{c}_B^\T\mathbf{B}^{-1}\mathbf{A}_{B_0} =  \mathbf{c}_{B_0}^\T - \mathbf{p}^\T
+  \]
+  Thus, an optimal dual solution is $\mathbf{p}^\T = \mathbf{c}_{B_0}^\T - \bar{\mathbf{c}}_{B_0}^\T$.
+\end{itemize}
+\end{theorem}
+\begin{theorem}[Complementary Slackness]
+\hfill\\\normalfont Complementary Slackness is useful in checking whether a primal dual pair is optimal.\\
+Let $\x$ and $\mathbf{p}$ be primal and dual feasible respectively. Then $\x$ and $\mathbf{p}$ are optimal if and only if
+\begin{align*}
+p_i(\mathbf{a}_i^\T\x-b_i)=0 &\text{ for all }i, \textbf{ and }\\
+(c_j-\mathbf{p}^\T\mathbf{A}_j)x_j=0 &\text{ for all } j
+\end{align*}
+\end{theorem}
+\begin{theorem}
+\hfill\\\normalfont A consequence of the above theorem: suppose $\x$ is feasible. Then $\x$ is primal optimal if and only if there is a dual feasible $\mathbf{p}$ such that $(\x, \mathbf{p})$ satisfies complementary slackness.
+\end{theorem}
+
+\end{document}
